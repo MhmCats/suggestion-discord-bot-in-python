@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_prefix(bot, message):
-    prefixes = ["s!", "s! "]
+    prefixes = ["s!", "s! ", "S!", "S! "]
 
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
@@ -39,7 +39,7 @@ async def on_guild_join(guild):
     role = await guild.create_role(name="Suggestion Blacklist")
     for channel in guild.text_channels:
         if channel.permissions_for(guild.me).send_messages:
-            await channel.send(f"Hello I am a bot made to do suggestions. My prefixes are `s!` `s! ` and pinging me! I have created a role called <@&{role.id}> for you to add to people who you don't want suggesting. Please do not change the name of this role but you are welcome to give it a new colour.\n\nType s!help for help on commands!")
+            await channel.send(f"Hello I am a bot made to do suggestions. My prefix is `s!` and pinging me! I have created a role called <@&{role.id}> for you to add to people who you don't want suggesting. Please do not change the name of this role but you are welcome to give it a new colour.\n\nType s!help for help on commands!")
             break
 
 class Pinger(commands.Cog):
