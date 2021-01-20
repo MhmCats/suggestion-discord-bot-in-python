@@ -22,8 +22,6 @@ class Admin(commands.Cog):
     @commands.is_owner()
     @commands.command(pass_context=True, hidden=True, name='eval')
     async def _eval(self, ctx, *, body: str):
-        if "import sys" in body or "exec" in body or "eval" in body or "__builtins__" in body:
-            return await ctx.send("no")
         
         """Evaluates a code"""
         env = {
