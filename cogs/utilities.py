@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 
 import time
+import math
 
 class Utilities(commands.Cog):
     def __init__(self, bot):
@@ -19,20 +20,27 @@ class Utilities(commands.Cog):
                     continue
         return True
 
+    async def send_answer(self, ctx, expression, answer):
+        embed = discord.Embed(color=discord.Colour.gold(),
+                              description=f":inbox_tray: **Input:** ```py\n{expression}```\n:outbox_tray: **Output:** ```fix\n{answer}```")
+        embed.set_author(name=ctx.message.author,
+                         icon_url=ctx.message.author.avatar_url)
+        await ctx.message.reply(embed=embed)
+    
     @commands.command(name="calculate")
-    async def _calculate(self, ctx, *,expression):
+    async def _calculate(self, ctx, *, expression):
         if await self.check_calculation(list(expression)):
             if len(str(eval(expression))) > 200:
                 expression_ans = "Infinty"
             else:
                 expression_ans = eval(expression)
-            embed = discord.Embed(color=discord.Colour.gold(),
-                                  description=f":inbox_tray: **Input:** ```py\n{expression}```\n:outbox_tray: **Output:** ```fix\n{expression_ans}```")
-            embed.set_author(name=ctx.message.author,
-                         icon_url=ctx.message.author.avatar_url)
-            await ctx.message.reply(embed=embed)            
+            await self.send_answer(ctx, expression, expression_ans)         
         else:
-            await ctx.send("Your expression had an invalid character in it!")
+            if "sqrt" in expression and expression.startswith("sqrt(") and expression.endswith(")"):
+                number = expression.strip("sqrt()")
+                await self.send_answer(ctx, expression, math.sqrt(int(number)))
+            else:
+                await ctx.send("Your expression had an invalid character in it!")
 
     @commands.command(name="ping")
     async def _ping(self, ctx):
