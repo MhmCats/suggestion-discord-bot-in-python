@@ -78,5 +78,40 @@ class Help(commands.Cog):
         await ctx.message.add_reaction('\u2705') 
         await ctx.message.author.send(embed=embed)
 
+        @_help.command(name="fun")
+        async def _fun(self, ctx):
+            embed = discord.Embed(color=discord.Colour.gold(),
+                                  description="Help for the fun commands of the bot")
+            embed.set_author(name="Help For Fun Commands",
+                             icon_url=ctx.message.author.avatar_url)
+            
+            embed.add_field(name="Hack",
+                            value="```s!hack [Member]```")
+            embed.add_field(name="Calmly",
+                            value="```s!calmly```")
+            embed.add_field(name="Lemon",
+                            value="```s!lemon```")
+            embed.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
+
+            await ctx.message.add_reaction('\u2705') 
+            await ctx.message.author.send(embed=embed)
+
+        @_help.command(name="utility")
+        async def _utility(self, ctx):
+            embed = discord.Embed(color=discord.Colour.gold(),
+                                  description="Commands for the utility feature of the bot")
+            embed.set_author(name="Help For Utility Commands",
+                             icon_url=ctx.message.author.avatar_url)
+
+            embed.add_field(name="Ping",
+                            value="```s!ping```")
+            embed.add_field(name="Calculate",
+                            value="The operations that are supported are pythonian as well as a standalone sqrt() option ```s!calculate <Operation>")
+            
+            embed.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
+
+            await ctx.message.add_reaction('\u2705') 
+            await ctx.message.author.send(embed=embed)
+
 def setup(bot):
     bot.add_cog(Help(bot))
