@@ -46,6 +46,13 @@ class Fun(commands.Cog):
         await asyncio.sleep(1)
         await message.edit(content=f"```Finished Hacking {user} \n\n[################################################################################################################################]\n\nETA: Done!```")
 
+    @commands.command(name="calmly")
+    async def _calmly(self, ctx):
+        await ctx.send("https://www.youtube.com/watch?v=0cfDlEN6uSE")
+    
+    @commands.command(name="lemon")
+    async def _lemon(self, ctx):
+        await ctx.send(":lemon:")
 
 def setup(bot):
     bot.add_cog(Fun(bot))
