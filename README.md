@@ -1,5 +1,7 @@
 # Suggestion Discord Bot Made In Python
 
+## Packages used
+
 This bot was made in the discord.py library which you can install by running either:
 * For MacOS and Linux
 ```python3 -m pip install -U discord.py```
@@ -39,5 +41,21 @@ The principle of the suggestion feauture of the bot is that, instead of the bot 
 The main point of this was to make it look better as a webhook's name and avatar can be changed every time it posts a new message. In this case the name and avatar would be changed to the person who is making the suggestion.
 
 **Please note that any commands requiring elevated permissions *except from the Owner commands* require permissions of "Manage Server" or higher**
+
+## Inviting the bot
+
+For the bot to work in your server it needs the following permissions:
+* Manage Channels - To create the suggestion channel on the s!setup command
+* Manage Roles - To create the Blacklist Role on joining
+* Manage Webhooks - So it can create and edit the suggestion webhook
+* Send Messages
+* Embed Links
+* See Channels
+* Add Reactions
+
+If it does not have any of these then some of its features might not work.
+
+**Invite Link:** [THIS WILL BE PUT IN AT A LATER DATE]
+**Support Server:** [THIS WILL BE PUT IN AT A LATER DATE]
 
 Feel free to copy any of this code
