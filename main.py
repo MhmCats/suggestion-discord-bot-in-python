@@ -50,7 +50,7 @@ class Pinger(commands.Cog):
     @tasks.loop(seconds=300.0)
     async def _pinger(self):
         print(f"Ping: {int(self.bot.latency*1000)}ms")
-        await bot.change_presence(activity=discord.Game(name=f"Watching out for s!help | Ping: {int(self.bot.latency*1000)}ms"), status=discord.Status.do_not_disturb)
+        await bot.change_presence(activity=discord.Game(name=f"Watching out for s!help | Ping: {int(self.bot.latency*1000)}ms"), status=discord.Status.online)
     
     @_pinger.before_loop
     async def _before_pinger(self):
