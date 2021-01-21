@@ -30,17 +30,24 @@ if __name__ == "__main__":
         bot.load_extension(extension)
         print(f"Loaded extension {extension} successfully")
 
-@bot.event
-async def on_ready():
-    print(f'\nLogged in as: {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n')
+class Events(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
-@bot.event
-async def on_guild_join(guild):
-    role = await guild.create_role(name="Suggestion Blacklist")
-    for channel in guild.text_channels:
-        if channel.permissions_for(guild.me).send_messages:
-            await channel.send(f"Hello I am a bot made to do suggestions. My prefix is `s!` and pinging me! I have created a role called <@&{role.id}> for you to add to people who you don't want suggesting. Please do not change the name of this role but you are welcome to give it a new colour.\n\nType s!help for help on commands!")
-            break
+    @commands.Cog.listener("on_ready")
+    async def print_when_login(self):
+        print(f'\nLogged in as: {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n')
+
+
+    @commands.Cog.listener("on_guild_join")
+    async def message_when_join_guild(self, guild):
+        role = await guild.create_role(name="Suggestion Blacklist")
+        for channel in guild.text_channels:
+            if channel.permissions_for(guild.me).send_messages:
+                await channel.send(f"Hello I am a bot made to do suggestions. My prefix is `s!` and pinging me! I have created a role called <@&{role.id}> for you to add to people who you don't want suggesting. Please do not change the name of this role but you are welcome to give it a new colour.\n\nType s!help for help on commands!")
+                break
+
+bot.add_cog(Events(bot))
 
 class Pinger(commands.Cog):
     def __init__(self, bot):
