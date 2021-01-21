@@ -55,7 +55,15 @@ For the bot to work in your server it needs the following permissions:
 
 If it does not have any of these then some of its features might not work.
 
+## Hosting the bot yourself
+
+If you are looking to host the bot yourself on your own device then you can simply clone the repository and add a file called .env. Inside the .env file it should look like this:
+```TOKEN = [Your Discord Bot's Token]```
+Run the bot in command prompt or the terminal and it should become online!
+If anything goes wrong then just make an issue.
+
 **Invite Link:** [THIS WILL BE PUT IN AT A LATER DATE]
+
 **Support Server:** [THIS WILL BE PUT IN AT A LATER DATE]
 
 Feel free to copy any of this code
