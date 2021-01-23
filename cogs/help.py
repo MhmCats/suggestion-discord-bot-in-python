@@ -111,6 +111,9 @@ class Help(commands.Cog):
             embed.add_field(name="Calculate",
                             value="The operations that are supported are pythonian as well as a standalone sqrt() option ```s!calculate <Operation>```",
                             inline=False)
+            embed.add_field(name="User Info",
+                            value="```s!userinfo [User]```",
+                            inline=False)
             
             embed.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
 
