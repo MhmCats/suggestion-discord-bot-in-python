@@ -12,7 +12,7 @@ class Suggestions(commands.Cog):
     
     async def check_suggestion_channel(self, guild):
         for channel in guild.text_channels:
-            if channel.name == "suggestions":
+            if "suggestions" in channel.name:
                 return channel
             else:
                 continue
@@ -154,7 +154,7 @@ class Suggestions(commands.Cog):
             async with aiohttp.ClientSession() as session:
                 real_webhook = Webhook.from_url(webhook.url, adapter=AsyncWebhookAdapter(session))
                 await real_webhook.edit_message(messageid, embed=embed)
-                
+
             await ctx.message.add_reaction('\u2705')
         else:
             return await ctx.message.reply("This suggestion has already been accepted/denied")
