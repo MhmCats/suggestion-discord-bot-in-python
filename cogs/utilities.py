@@ -3,6 +3,7 @@ from discord.ext import commands
 
 import time
 import math
+import datetime
 
 class Utilities(commands.Cog):
     def __init__(self, bot):
@@ -47,6 +48,79 @@ class Utilities(commands.Cog):
         t0 = time.time()
         message = await ctx.message.reply("Pong!")
         await message.edit(content=f"**API:** {int(self.bot.latency*1000)}ms\n**Edit Message:** {int((time.time()-t0)*1000)}ms")
+    
+    async def get_badges(self, user):
+        flags = user.public_flags
+        badges = {
+            "partner": "<:partner:802519060046807040>",
+            "hypesquad": "<:hypesquad_events:802520390836158485>",
+            "hypesquad_bravery": "<:bravery:802518720215515147>",
+            "hypesquad_brilliance": "<:brilliance:802518820224630784>",
+            "hypesquad_balance": "<:balance:802518667996037120>",
+            "verified_bot_developer": "<:bot_developer:802518905562071101>"
+        }
+        text = ""
+        if flags.hypesquad_balance:
+            text += f'{badges["hypesquad_balance"]} '
+        if flags.hypesquad_bravery:
+            text += f'{badges["hypesquad_bravery"]} '
+        if flags.hypesquad_brilliance:
+            text += f'{badges["hypesquad_brilliance"]} '
+        if flags.verified_bot_developer:
+            text += f'{badges["verified_bot_developer"]} '
+        if flags.hypesquad:
+            text += f'{badges["hypesquad"]} '
+        if flags.partner:
+            text += f'{badges["partner"]} '
+        if not user.premium_since is None:
+            text += '<:booster:802519275273322547> '
+        if not text == "":
+            return text
+        else:
+            return "None"
+
+    @commands.command(name="userinfo")
+    async def _userinfo(self, ctx, user: discord.Member = None):
+        if user is None:
+            user = ctx.message.author
+
+        status_types = {
+            "online": "<:status_online:802082984059994113>",
+            "offline": "<:status_offline:802082948869914654> ",
+            "idle": "<:status_idle:802082902564143164>",
+            "dnd": "<:status_dnd:802082862077444106>"
+        }
+
+        roles = f"{ctx.guild.default_role}, "
+        for role in user.roles:
+            if not role.id == ctx.guild.id:
+                roles += f"<@&{role.id}>, "
+            else:
+                continue
+        roles = roles[:-2]
+        
+        now = datetime.datetime.now()
+        joined_at = f"{user.joined_at.strftime('%d/%m/%Y at %H:%M')} ({(now - user.joined_at).days} days ago)"
+        created_at = f"{user.created_at.strftime('%d/%m/%Y at %H:%M')} ({(now - user.created_at).days} days ago)"
+
+        embed = discord.Embed(color=user.color)
+        embed.set_author(name=user,
+                         icon_url=user.avatar_url)
+        embed.set_thumbnail(url=user.avatar_url)
+
+        embed.add_field(name="ID",
+                        value=user.id)
+        embed.add_field(name="Status",
+                        value=f"{status_types[user.raw_status]}")
+        embed.add_field(name="Badges",
+                        value=await self.get_badges(user))
+        embed.add_field(name="Dates",
+                        value=f"**Created At:** {created_at}\n**Joined At:** {joined_at}",
+                        inline=False)
+        embed.add_field(name="Roles",
+                        value=roles,
+                        inline=False)
+        await ctx.message.reply(embed=embed)
 
 def setup(bot):
     bot.add_cog(Utilities(bot))
