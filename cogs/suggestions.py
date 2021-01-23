@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 
-import requests
-from discord import Webhook, RequestsWebhookAdapter
+from discord import Webhook, AsyncWebhookAdapter
+import aiohttp
 
 import datetime
 
@@ -64,11 +64,12 @@ class Suggestions(commands.Cog):
         embed.set_author(name=ctx.message.author,
                          icon_url=ctx.message.author.avatar_url)
 
-        real_webhook = Webhook.partial(webhook.id, webhook.token, adapter=RequestsWebhookAdapter())
-        real_webhook.send(embed=embed,
-                          username=ctx.message.author.display_name,
-                          avatar_url=ctx.message.author.avatar_url,
-                          allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False))
+        async with aiohttp.ClientSession() as session:
+            real_webhook = Webhook.from_url(webhook.url, adapter=AsyncWebhookAdapter(session))
+            await real_webhook.send(embed=embed,
+                                    username=ctx.message.author.display_name,
+                                    avatar_url=ctx.message.author.avatar_url,
+                                    allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False))
         
         await self.add_reaction(channel)
         
@@ -106,8 +107,11 @@ class Suggestions(commands.Cog):
             embed.set_author(name=message.embeds[0].author.name,
                             icon_url=message.embeds[0].author.icon_url)
             
-            real_webhook = Webhook.partial(webhook.id, webhook.token, adapter=RequestsWebhookAdapter())
-            real_webhook.edit_message(messageid, embed=embed)
+            async with aiohttp.ClientSession() as session:
+                real_webhook = Webhook.from_url(webhook.url, adapter=AsyncWebhookAdapter(session))
+                await real_webhook.edit_message(messageid, embed=embed)
+            
+            
             await ctx.message.add_reaction('\u2705')
         else:
             return await ctx.message.reply("This suggestion has already been accepted/denied")
@@ -147,8 +151,10 @@ class Suggestions(commands.Cog):
             embed.set_author(name=message.embeds[0].author.name,
                             icon_url=message.embeds[0].author.icon_url)
             
-            real_webhook = Webhook.partial(webhook.id, webhook.token, adapter=RequestsWebhookAdapter())
-            real_webhook.edit_message(messageid, embed=embed)
+            async with aiohttp.ClientSession() as session:
+                real_webhook = Webhook.from_url(webhook.url, adapter=AsyncWebhookAdapter(session))
+                await real_webhook.edit_message(messageid, embed=embed)
+                
             await ctx.message.add_reaction('\u2705')
         else:
             return await ctx.message.reply("This suggestion has already been accepted/denied")
