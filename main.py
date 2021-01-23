@@ -16,14 +16,10 @@ intitial_extensions = ["cogs.admin",
                        "cogs.utilities",
                        "cogs.fun"]
 
-intents = discord.Intents(guilds=True, members=True, bans=False, emojis=False, 
-                          integrations=True, webhooks=True, invites=False, voice_states=False,
-                          presences=False, messages=True, reactions=True, typing=False)
-
 bot = commands.Bot(command_prefix=get_prefix, 
                    owner_id=737928480389333004, 
                    help_command=None,
-                   intents=intents)
+                   intents=discord.Intents.all())
 
 if __name__ == "__main__":
     for extension in intitial_extensions:
