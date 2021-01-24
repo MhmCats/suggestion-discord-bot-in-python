@@ -121,6 +121,15 @@ class Utilities(commands.Cog):
                         value=roles,
                         inline=False)
         await ctx.message.reply(embed=embed)
+    
+    @commands.command(name="invite")
+    async def _invite(self, ctx):
+        embed = discord.Embed(color=discord.Colour.gold(), 
+                              description="To invite the bot to your server with the recommended permissions click [here](https://discord.com/api/oauth2/authorize?client_id=743435729085923379&permissions=805694544&scope=bot)"
+                                          "\nTo invite the bot with no permissions then click [here](https://discord.com/api/oauth2/authorize?client_id=743435729085923379&permissions=0&scope=bot)")
+        embed.set_author(name=ctx.author,
+                         icon_url=ctx.author.avatar_url)
+        await ctx.message.reply(embed=embed)
 
 def setup(bot):
     bot.add_cog(Utilities(bot))
