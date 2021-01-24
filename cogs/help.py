@@ -1,128 +1,137 @@
 import discord
 from discord.ext import commands
 
+import asyncio
+
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(name="help", invoke_without_command=True)
-    async def help(self, ctx, module = None):
-        if module is None:
-            embed = discord.Embed(color=discord.Colour.gold(),
-                                  description="Type `s!help [Module Name]` for more information on modules.")
-            embed.set_author(name="Help Menu",
-                             icon_url=ctx.message.author.avatar_url)
-            
-            embed.add_field(name=":speech_balloon: Suggestion Commands :speech_balloon:",
-                            value="```s!help suggestion```")
-            embed.add_field(name=":lollipop: Fun Commands :lollipop:",
-                            value="```s!help fun```")
-            embed.add_field(name=":gear: Utility Commands :gear:",
-                            value="```s!help utility```")
-            
-            if ctx.message.author.id == 737928480389333004:
-                embed.add_field(name=":warning: Admin Commands :warning:",
-                                value="```s!help admin```")
-            
-            await ctx.message.add_reaction('\u2705')
-            await ctx.message.author.send(embed=embed)
+    @commands.command(name="help")
+    async def help(self, ctx):
         
-        elif module == "admin":
+        menu = discord.Embed(color=discord.Colour.gold(),
+                             description="This is the Help Menu for Suggestion Bot. Use the reactions (below) to navigate"
+                                         "\n\n ⏪ Go to the first page\n ◀️ Go backwards a page\n ▶️ Go forward a page"
+                                         "\n ⏩ Go to the last page\n 🗑️ Delete the message")
+        menu.set_author(name="Help Menu",
+                            icon_url=ctx.message.author.avatar_url)
+
         
-            if not ctx.message.author.id == 737928480389333004:
+        admin = discord.Embed(color=discord.Colour.gold(), 
+                                description="Super secret admin commmands that only the bot owner can use!")
+        admin.set_author(name="Help For Admin Commands",
+                            icon_url=ctx.message.author.avatar_url)
+        
+        admin.add_field(name="Eval",
+                        value="```s!eval <Code>```")
+        admin.add_field(name="Load",
+                        value="```s!load <Cog>```")
+        admin.add_field(name="Unload",
+                        value="```s!unload <Cog>```")
+        admin.add_field(name="Reload",
+                        value="```s!reload <Cog>```")
+        
+        suggestion = discord.Embed(color=discord.Colour.gold(),
+                                description="Commands for the suggestion feature of the bot")
+        suggestion.set_author(name="Help For Suggestion Commands",
+                            icon_url=ctx.message.author.avatar_url)
+        
+        suggestion.add_field(name="Suggest",
+                        value="```s!suggest <Suggestion>```",
+                        inline=False)
+        suggestion.add_field(name="Accept",
+                        value=":warning: This command needs permissons of `Manage Server` to be executed ```s!accept <Message ID> [Reason]```",
+                        inline=False)
+        suggestion.add_field(name="Deny",
+                        value=":warning: This command needs permissons of `Manage Server` to be executed ```s!deny <Message ID> [Reason]```",
+                        inline=False)
+        suggestion.add_field(name="Blacklist",
+                        value=":warning: This command needs permissons of `Manage Server` to be executed ```s!blacklist <Member>```",
+                        inline=False)
+        suggestion.add_field(name="Setup",
+                        value=":warning: This command needs permissons of `Manage Server` to be executed ```s!setup```",
+                        inline=False)
+
+        suggestion.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
+
+        fun = discord.Embed(color=discord.Colour.gold(),
+                                description="Help for the fun commands of the bot")
+        fun.set_author(name="Help For Fun Commands",
+                            icon_url=ctx.message.author.avatar_url)
+        
+        fun.add_field(name="Hack",
+                        value="```s!hack [Member]```",
+                        inline=False)
+        fun.add_field(name="Calmly",
+                        value="```s!calmly```",
+                        inline=False)
+        fun.add_field(name="Lemon",
+                        value="```s!lemon```",
+                        inline=False)
+        fun.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
+
+        utility = discord.Embed(color=discord.Colour.gold(),
+                                description="Commands for the utility feature of the bot")
+        utility.set_author(name="Help For Utility Commands",
+                            icon_url=ctx.message.author.avatar_url)
+
+        utility.add_field(name="Ping",
+                        value="```s!ping```",
+                        inline=False)
+        utility.add_field(name="Calculate",
+                        value="The operations that are supported are pythonian as well as a standalone sqrt() option ```s!calculate <Operation>```",
+                        inline=False)
+        utility.add_field(name="User Info",
+                        value="```s!userinfo [User]```",
+                        inline=False)
+        
+        utility.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
+
+        embeds = {1: menu,
+                  2: suggestion,
+                  3: utility,
+                  4: fun,
+                  5: admin}
+        
+        message = await ctx.send(embed=menu)
+        await message.add_reaction("⏪")
+        await message.add_reaction("◀️")
+        await message.add_reaction("▶️")
+        await message.add_reaction("⏩")
+        await message.add_reaction("🗑️")
+        page = 1 
+
+        while True:
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0)
+                if user == ctx.author and str(reaction) in ["⏪", "◀️", "▶️", "⏩", "🗑️"]:
+                    if str(reaction.emoji) == "⏪" and page != 1:
+                        page = 1
+                        await message.edit(embed=embeds[page])
+                    
+                    elif str(reaction.emoji) == "◀️" and page != 1:
+                        page -= 1
+                        await message.edit(embed=embeds[page])
+                    
+                    elif str(reaction.emoji) == "▶️" and page != 5:
+                        page += 1
+                        await message.edit(embed=embeds[page])
+                    
+                    elif str(reaction.emoji) == "⏩" and page != 5:
+                        page = 5
+                        await message.edit(embed=embeds[page])
+
+                    elif str(reaction.emoji) == "🗑️":
+                        await message.delete()
+                        return
+
+                    await message.remove_reaction(str(reaction.emoji), ctx.author)
+                else:
+                    continue
+
+            except asyncio.TimeoutError:
                 return
-        
-            embed = discord.Embed(color=discord.Colour.red(), 
-                                  description="Super secret admin commmands that only the bot owner can use!")
-            embed.set_author(name="Help For Admin Commands",
-                             icon_url=ctx.message.author.avatar_url)
-            
-            embed.add_field(name="Eval",
-                            value="```s!eval <Code>```")
-            embed.add_field(name="Load",
-                            value="```s!load <Cog>```")
-            embed.add_field(name="Unload",
-                            value="```s!unload <Cog>```")
-            embed.add_field(name="Reload",
-                            value="```s!reload <Cog>```")
-            
-            await ctx.message.add_reaction('\u2705')
-            await ctx.message.author.send(embed=embed)
-        
-        elif module == "suggestion":
-        
-            embed = discord.Embed(color=discord.Colour.gold(),
-                                  description="Commands for the suggestion feature of the bot")
-            embed.set_author(name="Help For Suggestion Commands",
-                             icon_url=ctx.message.author.avatar_url)
-            
-            embed.add_field(name="Suggest",
-                            value="```s!suggest <Suggestion>```",
-                            inline=False)
-            embed.add_field(name="Accept",
-                            value=":warning: This command needs permissons of `Manage Server` to be executed ```s!accept <Message ID> [Reason]```",
-                            inline=False)
-            embed.add_field(name="Deny",
-                            value=":warning: This command needs permissons of `Manage Server` to be executed ```s!deny <Message ID> [Reason]```",
-                            inline=False)
-            embed.add_field(name="Blacklist",
-                            value=":warning: This command needs permissons of `Manage Server` to be executed ```s!blacklist <Member>```",
-                            inline=False)
-            embed.add_field(name="Setup",
-                            value=":warning: This command needs permissons of `Manage Server` to be executed ```s!setup```",
-                            inline=False)
-
-            embed.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
-
-            await ctx.message.add_reaction('\u2705') 
-            await ctx.message.author.send(embed=embed)
-        
-        elif module == "fun":
-
-            embed = discord.Embed(color=discord.Colour.gold(),
-                                  description="Help for the fun commands of the bot")
-            embed.set_author(name="Help For Fun Commands",
-                             icon_url=ctx.message.author.avatar_url)
-            
-            embed.add_field(name="Hack",
-                            value="```s!hack [Member]```",
-                            inline=False)
-            embed.add_field(name="Calmly",
-                            value="```s!calmly```",
-                            inline=False)
-            embed.add_field(name="Lemon",
-                            value="```s!lemon```",
-                            inline=False)
-            embed.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
-
-            await ctx.message.add_reaction('\u2705') 
-            await ctx.message.author.send(embed=embed)
-        
-        elif module == "utility":
-            
-            embed = discord.Embed(color=discord.Colour.gold(),
-                                  description="Commands for the utility feature of the bot")
-            embed.set_author(name="Help For Utility Commands",
-                             icon_url=ctx.message.author.avatar_url)
-
-            embed.add_field(name="Ping",
-                            value="```s!ping```",
-                            inline=False)
-            embed.add_field(name="Calculate",
-                            value="The operations that are supported are pythonian as well as a standalone sqrt() option ```s!calculate <Operation>```",
-                            inline=False)
-            embed.add_field(name="User Info",
-                            value="```s!userinfo [User]```",
-                            inline=False)
-            
-            embed.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
-
-            await ctx.message.add_reaction('\u2705') 
-
-            await ctx.message.author.send(embed=embed)
-
-        else:
-            await ctx.message.author.send("Module not found. Please try again.")
 
 def setup(bot):
     bot.add_cog(Help(bot))
