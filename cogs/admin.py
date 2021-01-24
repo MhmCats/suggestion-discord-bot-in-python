@@ -47,7 +47,7 @@ class Admin(commands.Cog):
         func = env['func']
         try:
             with redirect_stdout(stdout):
-                ret = await func()
+                await func()
         except SystemExit:
             return await ctx.send("I will not do a SystemExit!")
         except Exception as e:
