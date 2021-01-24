@@ -85,7 +85,7 @@ class Suggestions(commands.Cog):
             channel = await self.check_suggestion_channel(ctx.message.guild)
 
         if messageid is None:
-            return await ctx.message.reply("You did not use this command correctly. The correct implementaton is ```s!accept [Message ID] <Reason>")
+            return await ctx.message.reply("You did not use this command correctly. The correct implementaton is ```s!accept [Message ID] <Reason>```")
 
         message = await channel.fetch_message(messageid)
         
@@ -131,7 +131,7 @@ class Suggestions(commands.Cog):
             channel = await self.check_suggestion_channel(ctx.message.guild)
 
         if messageid is None:
-            return await ctx.send("You did not use this command correctly. The correct implementaton is ```s!deny [Message ID] <Reason>")
+            return await ctx.message.reply("You did not use this command correctly. The correct implementaton is ```s!deny [Message ID] <Reason>```")
 
         message = await channel.fetch_message(messageid)
         
@@ -181,6 +181,7 @@ class Suggestions(commands.Cog):
         await channel.create_webhook(name="Suggestion Webhook")
         
         await ctx.message.add_reaction('\u2705')
+        await channel.send("**__This is the new suggestion channel__**\n\nIf you type `s!suggest <Suggestion>` anywhere in this server it will pop up here! \n\nMembers who have **Manage Server** permissions can accept and deny suggestions. They can also blacklist people from suggestions. \n\nI hope you enjoy this bot!")
 
     @_setup.error 
     async def _setup_handler(self, ctx, error):
@@ -191,7 +192,7 @@ class Suggestions(commands.Cog):
     @commands.command(name="blacklist")
     async def _blacklist(self, ctx, user: discord.Member = None):
         if user is None:
-            return await ctx.message.reply("The correct implementation for that command is ```s!blacklist <Member>")
+            return await ctx.message.reply("You did not use this command correctly. The correct implementation for that command is ```s!blacklist <Member>```")
         
         for role in user.roles:
             if role.name == "Suggestion Blacklist":
