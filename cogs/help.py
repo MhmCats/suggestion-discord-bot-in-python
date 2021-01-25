@@ -148,12 +148,14 @@ class Help(commands.Cog):
                         while number is None:
                             try:
                                 response = await self.bot.wait_for("message", timeout=60.0)
-                                if response.author == ctx.author:
+                                if response.author == ctx.author and response.content in ["1", "2", "3", "4", "5"]:
                                     try:
                                         number = int(response.content)
                                     except ValueError:
                                         number = None
                                         continue
+                                else:
+                                    continue
                             except asyncio.TimeoutError:
                                 return
                         await question.delete()
