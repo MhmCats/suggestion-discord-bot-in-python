@@ -110,6 +110,35 @@ class Suggestions(commands.Cog):
         
         else:
             return await ctx.message.reply("That isn't your suggestion!")
+    
+    @commands.command(name="deletesuggestion")
+    async def _deletesuggestion(self, ctx, messageid: int = None):
+        
+        if await self.check_suggestion_channel(ctx.message.guild) is None:
+            return await ctx.message.reply("This guild has no suggestion channel to fix this either:\n > **1.** Make a channel called `#suggestions`\n > **2.**  Run the command `s!setup`")
+        else:
+            channel = await self.check_suggestion_channel(ctx.message.guild)
+        
+        if messageid is None:
+            return await ctx.message.reply("You did not use this command correctly. The correct implementaton is ```s!deletesuggestion [Message ID]```")
+
+        message = await channel.fetch_message(messageid)
+
+        webhook = await self.get_webhook(channel)
+        if webhook is None:
+            webhook = await channel.create_webhook(name="Suggestion Webhook")
+
+        if str(ctx.message.author.id) in message.embeds[0].footer.text:
+            await message.clear_reactions()
+            async with aiohttp.ClientSession() as session:
+                real_webhook = Webhook.from_url(webhook.url, adapter=AsyncWebhookAdapter(session))
+                await real_webhook.edit_message(messageid, embed=None, content="This suggestion has been deleted.")
+            
+            emoji = "<:yes:802083268098785291>"
+            await ctx.message.add_reaction(emoji)
+        
+        else:
+            return await ctx.message.reply("That isn't your suggestion!")
 
     @commands.has_permissions(manage_guild=True)
     @commands.command(name="accept")
