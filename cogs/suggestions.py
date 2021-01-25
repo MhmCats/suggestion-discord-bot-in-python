@@ -27,8 +27,11 @@ class Suggestions(commands.Cog):
 
     async def add_reaction(self, channel):    
         async for message in channel.history(limit=1):
-            await message.add_reaction("🔼")
-            await message.add_reaction("🔽")
+            yes = "<:yes:802083268098785291>"
+            no = "<:no:802083299559473222>"
+            await message.add_reaction(yes)
+            await message.add_reaction(no)
+
             return
 
     @commands.command(name="suggest")
@@ -55,12 +58,9 @@ class Suggestions(commands.Cog):
         if webhook is None:
             webhook = await channel.create_webhook(name="Suggestion Webhook")
         
-        now = datetime.datetime.now()
-        now = now.strftime("%d/%m/%Y")
-        
         embed = discord.Embed(color=discord.Colour.gold(),
                               description=f"**Suggestion:** {suggestion}")
-        embed.set_footer(text=f"{now} | Open")
+        embed.set_footer(text=f"Open | {ctx.message.author.id}")
         embed.set_author(name=ctx.message.author,
                          icon_url=ctx.message.author.avatar_url)
 
@@ -73,7 +73,43 @@ class Suggestions(commands.Cog):
         
         await self.add_reaction(channel)
         
-        await ctx.message.add_reaction('\u2705')
+        emoji = "<:yes:802083268098785291>"
+        await ctx.message.add_reaction(emoji)
+    
+    @commands.command(name="editsuggestion")
+    async def _editsuggestion(self, ctx, messageid: int = None, *, newcontent = None):
+        
+        if await self.check_suggestion_channel(ctx.message.guild) is None:
+            return await ctx.message.reply("This guild has no suggestion channel to fix this either:\n > **1.** Make a channel called `#suggestions`\n > **2.**  Run the command `s!setup`")
+        else:
+            channel = await self.check_suggestion_channel(ctx.message.guild)
+        
+        if messageid is None:
+            return await ctx.message.reply("You did not use this command correctly. The correct implementaton is ```s!editsuggestion [Message ID] <Reason>```")
+
+        message = await channel.fetch_message(messageid)
+
+        webhook = await self.get_webhook(channel)
+        if webhook is None:
+            webhook = await channel.create_webhook(name="Suggestion Webhook")
+
+        if str(ctx.message.author.id) in message.embeds[0].footer.text:
+            
+            embed = discord.Embed(color=discord.Colour.gold(),
+                                description=f"**Suggestion:** {newcontent}")
+            embed.set_footer(text=f"Open | {ctx.message.author.id}")
+            embed.set_author(name=ctx.message.author,
+                             icon_url=ctx.message.author.avatar_url)
+            
+            async with aiohttp.ClientSession() as session:
+                real_webhook = Webhook.from_url(webhook.url, adapter=AsyncWebhookAdapter(session))
+                await real_webhook.edit_message(messageid, embed=embed)
+            
+            emoji = "<:yes:802083268098785291>"
+            await ctx.message.add_reaction(emoji)
+        
+        else:
+            return await ctx.message.reply("That isn't your suggestion!")
 
     @commands.has_permissions(manage_guild=True)
     @commands.command(name="accept")
@@ -88,22 +124,16 @@ class Suggestions(commands.Cog):
             return await ctx.message.reply("You did not use this command correctly. The correct implementaton is ```s!accept [Message ID] <Reason>```")
 
         message = await channel.fetch_message(messageid)
-        
-        message = await channel.fetch_message(messageid)
-        
+                
         webhook = await self.get_webhook(channel)
         if webhook is None:
             webhook = await channel.create_webhook(name="Suggestion Webhook")
         if "Open" in message.embeds[0].footer.text:
-            
             await message.clear_reactions()
-
-            now = datetime.datetime.now()
-            now = now.strftime("%d/%m/%Y")
             
             embed = discord.Embed(color=discord.Colour.green(),
                                 description=f"{message.embeds[0].description}\n\n**Accepted by {ctx.message.author}:** {reason}")
-            embed.set_footer(text=f"{now} | Closed")
+            embed.set_footer(text=f"Closed")
             embed.set_author(name=message.embeds[0].author.name,
                             icon_url=message.embeds[0].author.icon_url)
             
@@ -112,7 +142,8 @@ class Suggestions(commands.Cog):
                 await real_webhook.edit_message(messageid, embed=embed)
             
             
-            await ctx.message.add_reaction('\u2705')
+            emoji = "<:yes:802083268098785291>"
+            await ctx.message.add_reaction(emoji)
         else:
             return await ctx.message.reply("This suggestion has already been accepted/denied")
     
@@ -141,13 +172,10 @@ class Suggestions(commands.Cog):
         if "Open" in message.embeds[0].footer.text:
 
             await message.clear_reactions()
-        
-            now = datetime.datetime.now()
-            now = now.strftime("%d/%m/%Y")
-            
+                
             embed = discord.Embed(color=discord.Colour.red(),
                                 description=f"{message.embeds[0].description}\n\n**Denied by {ctx.message.author}:** {reason}")
-            embed.set_footer(text=f"{now} | Closed")
+            embed.set_footer(text=f"Closed")
             embed.set_author(name=message.embeds[0].author.name,
                             icon_url=message.embeds[0].author.icon_url)
             
@@ -155,7 +183,8 @@ class Suggestions(commands.Cog):
                 real_webhook = Webhook.from_url(webhook.url, adapter=AsyncWebhookAdapter(session))
                 await real_webhook.edit_message(messageid, embed=embed)
 
-            await ctx.message.add_reaction('\u2705')
+            emoji = "<:yes:802083268098785291>"
+            await ctx.message.add_reaction(emoji)
         else:
             return await ctx.message.reply("This suggestion has already been accepted/denied")
     
@@ -180,7 +209,8 @@ class Suggestions(commands.Cog):
                                             overwrites=ctx.message.channel.category.overwrites)
         await channel.create_webhook(name="Suggestion Webhook")
         
-        await ctx.message.add_reaction('\u2705')
+        emoji = "<:yes:802083268098785291>"
+        await ctx.message.add_reaction(emoji)
         await channel.send("**__This is the new suggestion channel__**\n\nIf you type `s!suggest <Suggestion>` anywhere in this server it will pop up here! \n\nMembers who have **Manage Server** permissions can accept and deny suggestions. They can also blacklist people from suggestions. \n\nI hope you enjoy this bot!")
 
     @_setup.error 
@@ -205,7 +235,8 @@ class Suggestions(commands.Cog):
         
         await user.add_roles(blacklist_role)
         
-        await ctx.message.add_reaction('\u2705')
+        emoji = "<:yes:802083268098785291>"
+        await ctx.message.add_reaction(emoji)
         
     @_blacklist.error 
     async def _blacklist_handler(self, ctx, error):
