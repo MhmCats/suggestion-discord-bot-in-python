@@ -46,6 +46,12 @@ class Help(commands.Cog):
         suggestion.add_field(name="Suggest",
                         value="```s!suggest <Suggestion>```",
                         inline=False)
+        suggestion.add_field(name="Edit Suggestion",
+                        value="You have to have __made the suggeston__ for this to work! ```s!editsuggestion <Message ID> <New Content>```",
+                        inline=False)
+        suggestion.add_field(name="Delete Suggestion",
+                        value="You have to have __made the suggeston__ for this to work! ```s!deletesuggestion <Message ID>```",
+                        inline=False)
         suggestion.add_field(name="Accept",
                         value=":warning: This command needs permissons of `Manage Server` to be executed ```s!accept <Message ID> [Reason]```",
                         inline=False)
