@@ -122,13 +122,19 @@ class Utilities(commands.Cog):
                         inline=False)
         await ctx.message.reply(embed=embed)
     
-    @commands.command(name="invite")
-    async def _invite(self, ctx):
-        embed = discord.Embed(color=discord.Colour.gold(), 
-                              description="To invite the bot to your server with the recommended permissions click [here](https://discord.com/api/oauth2/authorize?client_id=743435729085923379&permissions=805694544&scope=bot)"
-                                          "\nTo invite the bot with no permissions then click [here](https://discord.com/api/oauth2/authorize?client_id=743435729085923379&permissions=0&scope=bot)")
+    @commands.command(name="links")
+    async def _links(self, ctx):
+        embed = discord.Embed(color=discord.Colour.gold())
         embed.set_author(name=ctx.author,
                          icon_url=ctx.author.avatar_url)
+
+        embed.add_field(name="Inviting the bot",
+                        value="To invite the bot to your server with the recommended permissions click [here](https://discord.com/api/oauth2/authorize?client_id=743435729085923379&permissions=805694544&scope=bot)"
+                              "\nTo invite the bot with no permissions then click [here](https://discord.com/api/oauth2/authorize?client_id=743435729085923379&permissions=0&scope=bot)",
+                        inline=False)
+        embed.add_field(name="GitHub",
+                        value="The bot's GitHub repository can be found [here](https://github.com/MhmCats/suggestion-discord-bot-in-python)",
+                        inline=False)
         await ctx.message.reply(embed=embed)
 
 def setup(bot):
