@@ -145,8 +145,8 @@ class Help(commands.Cog):
                     elif str(reaction.emoji) == "🔢":
                         number = None
                         question = await ctx.send("Which page do you wish to go to?")
-                        while number is None:
-                            try:
+                        try:
+                            while number is None:
                                 response = await self.bot.wait_for("message", timeout=60.0)
                                 if response.author == ctx.author and response.content in ["1", "2", "3", "4", "5"]:
                                     try:
@@ -156,8 +156,8 @@ class Help(commands.Cog):
                                         continue
                                 else:
                                     continue
-                            except asyncio.TimeoutError:
-                                return
+                        except asyncio.TimeoutError:
+                            return
                         await question.delete()
                         await response.delete()
                         page = number
