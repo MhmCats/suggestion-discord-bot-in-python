@@ -62,7 +62,11 @@ If you are looking to host the bot yourself on your own device then you can simp
 Run the bot in command prompt or the terminal and it should become online!
 If anything goes wrong then just make an issue.
 
-**Invite Link:** [THIS WILL BE PUT IN AT A LATER DATE]
+**Invite Link:** 
+
+> To invite the bot to your server with the recommended permissions click [here](https://discord.com/api/oauth2/authorize?client_id=743435729085923379&permissions=805694544&scope=bot)
+
+> To invite the bot with no permissions then click: [here](https://discord.com/api/oauth2/authorize?client_id=743435729085923379&permissions=0&scope=bot),
 
 **Support Server:** [THIS WILL BE PUT IN AT A LATER DATE]
 
