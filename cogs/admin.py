@@ -42,21 +42,30 @@ class Admin(commands.Cog):
         try:
             exec(to_compile, env)
         except Exception as e:
-            return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+            embed = discord.Embed(color=discord.Colour.red(),
+                                  description=f'```py\n{e.__class__.__name__}: {e}\n```')
+            embed.set_author(name="Error",
+                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+            return await ctx.send(embed=embed)
 
         func = env['func']
         try:
             with redirect_stdout(stdout):
                 await func()
         except SystemExit:
-            return await ctx.send("I will not do a SystemExit!")
+            return
         except Exception as e:
             value = stdout.getvalue()
-            await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+            embed = discord.Embed(color=discord.Colour.red(),
+                                  description=f'```py\n{value}{traceback.format_exc()}\n```')
+            embed.set_author(name="Error",
+                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+            await ctx.send(embed=embed)
         else:
             value = stdout.getvalue()
             try:
-                await ctx.message.add_reaction('\u2705')
+                emoji = "<:yes:802083268098785291>"
+                await ctx.message.add_reaction(emoji)
             except:
                 pass
         
@@ -66,9 +75,14 @@ class Admin(commands.Cog):
         try:
             self.bot.load_extension(module)
         except commands.ExtensionError as e:
-            await ctx.send(f'```{e.__class__.__name__}: {e}```')
+            embed = discord.Embed(color=discord.Colour.red(),
+                                  description=f'```py\n{e.__class__.__name__}: {e}\n```')
+            embed.set_author(name="Error",
+                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+            return await ctx.send(embed=embed)
         else:
-            await ctx.message.add_reaction('\u2705')
+            emoji = "<:yes:802083268098785291>"
+            await ctx.message.add_reaction(emoji)
 
     @commands.is_owner()
     @commands.command(hidden=True)
@@ -76,9 +90,14 @@ class Admin(commands.Cog):
         try:
             self.bot.unload_extension(module)
         except commands.ExtensionError as e:
-            await ctx.send(f'```{e.__class__.__name__}: {e}```')
+            embed = discord.Embed(color=discord.Colour.red(),
+                                  description=f'```py\n{e.__class__.__name__}: {e}\n```')
+            embed.set_author(name="Error",
+                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+            return await ctx.send(embed=embed)
         else:
-            await ctx.message.add_reaction('\u2705')
+            emoji = "<:yes:802083268098785291>"
+            await ctx.message.add_reaction(emoji)
 
     @commands.is_owner()
     @commands.group(name='reload', hidden=True, invoke_without_command=True)
@@ -86,9 +105,14 @@ class Admin(commands.Cog):
         try:
             self.bot.reload_extension(module)
         except commands.ExtensionError as e:
-            await ctx.send(f'```{e.__class__.__name__}: {e}```')
+            embed = discord.Embed(color=discord.Colour.red(),
+                                  description=f'```py\n{e.__class__.__name__}: {e}\n```')
+            embed.set_author(name="Error",
+                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+            return await ctx.send(embed=embed)
         else:
-            await ctx.message.add_reaction('\u2705')
+            emoji = "<:yes:802083268098785291>"
+            await ctx.message.add_reaction(emoji)
 
 def setup(bot):
     bot.add_cog(Admin(bot))
