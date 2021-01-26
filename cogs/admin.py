@@ -11,26 +11,20 @@ class Admin(commands.Cog):
         self.bot = bot
     
     def cleanup_code(self, content):
-        """Automatically removes code blocks from the code."""
-        # remove ```py\n```
         if content.startswith('```') and content.endswith('```'):
             return content.strip('```py\n')
-
-        # remove `foo`
         return content.strip('` \n')
 
     @commands.is_owner()
     @commands.command(pass_context=True, hidden=True, name='eval')
     async def _eval(self, ctx, *, body: str):
-        
-        """Evaluates a code"""
         env = {
-            'bot': self.bot,
+            '_bot': self.bot,
             'ctx': ctx,
-            'channel': ctx.channel,
-            'author': ctx.author,
-            'guild': ctx.guild,
-            'message': ctx.message
+            '_channel': ctx.channel,
+            '_author': ctx.author,
+            '_guild': ctx.guild,
+            '_message': ctx.message
         }
 
         env.update(globals())
@@ -45,7 +39,7 @@ class Admin(commands.Cog):
             embed = discord.Embed(color=discord.Colour.red(),
                                   description=f'```py\n{e.__class__.__name__}: {e}\n```')
             embed.set_author(name="Error",
-                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+                             icon_url="https://cdn.discordapp.com/emojis/802083299559473222.png")
             return await ctx.send(embed=embed)
 
         func = env['func']
@@ -59,7 +53,7 @@ class Admin(commands.Cog):
             embed = discord.Embed(color=discord.Colour.red(),
                                   description=f'```py\n{value}{traceback.format_exc()}\n```')
             embed.set_author(name="Error",
-                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+                             icon_url="https://cdn.discordapp.com/emojis/802083299559473222.png")
             await ctx.send(embed=embed)
         else:
             value = stdout.getvalue()
@@ -78,7 +72,7 @@ class Admin(commands.Cog):
             embed = discord.Embed(color=discord.Colour.red(),
                                   description=f'```py\n{e.__class__.__name__}: {e}\n```')
             embed.set_author(name="Error",
-                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+                             icon_url="https://cdn.discordapp.com/emojis/802083299559473222.png")
             return await ctx.send(embed=embed)
         else:
             emoji = "<:yes:802083268098785291>"
@@ -93,7 +87,7 @@ class Admin(commands.Cog):
             embed = discord.Embed(color=discord.Colour.red(),
                                   description=f'```py\n{e.__class__.__name__}: {e}\n```')
             embed.set_author(name="Error",
-                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+                             icon_url="https://cdn.discordapp.com/emojis/802083299559473222.png")
             return await ctx.send(embed=embed)
         else:
             emoji = "<:yes:802083268098785291>"
@@ -108,7 +102,7 @@ class Admin(commands.Cog):
             embed = discord.Embed(color=discord.Colour.red(),
                                   description=f'```py\n{e.__class__.__name__}: {e}\n```')
             embed.set_author(name="Error",
-                             icon_url="https://cdn.discordapp.com/emojis/802083268098785291.png")
+                             icon_url="https://cdn.discordapp.com/emojis/802083299559473222.png")
             return await ctx.send(embed=embed)
         else:
             emoji = "<:yes:802083268098785291>"
