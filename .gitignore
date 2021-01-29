@@ -1,2 +1,4 @@
 cogs/__pycache__
 .env
+cogs/utils/__pycache__
+cogs/utils

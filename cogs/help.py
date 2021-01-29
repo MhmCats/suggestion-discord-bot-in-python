@@ -12,21 +12,22 @@ class Help(commands.Cog):
         
         menu = discord.Embed(color=discord.Colour.gold(),
                              description="This is the Help Menu for Suggestion Bot. Use the reactions to navigate.")
-        menu.set_author(name="Help Menu 1/5",
+        menu.set_author(name="Information",
                             icon_url=ctx.message.author.avatar_url)
         
         menu.add_field(name="Contents",
-                       value="**1.** This page\n**2.** Suggestion Commands\n**3.** Utility commands\n**4.** Fun Commands\n**5.** Bot Owner/Admin Commands",
+                       value="**1.** Suggestion Commands\n**2.** Utility commands\n**3.** Fun Commands\n**4.** Bot Owner/Admin Commands",
                        inline=False)
         menu.add_field(name="Reactions",
                        value="⏪ Go to the first page\n ◀️ Go backwards a page\n ⏹️ Delete the message\n ▶️ Go forward a page"
-                             "\n ⏩ Go to the last page\n 🔢 Navigate to a page number",
+                             "\n ⏩ Go to the last page\n 🔢 Navigate to a page number\n ℹ️ Information",
                        inline=False)
+        menu.set_footer(text="React with ▶️ to escape this page")
 
         
         admin = discord.Embed(color=discord.Colour.gold(), 
                                 description="Super secret admin commmands that only the bot owner can use!")
-        admin.set_author(name="Help For Admin Commands 5/5",
+        admin.set_author(name="Help For Admin Commands 4/4",
                             icon_url=ctx.message.author.avatar_url)
         
         admin.add_field(name="Eval",
@@ -40,7 +41,7 @@ class Help(commands.Cog):
         
         suggestion = discord.Embed(color=discord.Colour.gold(),
                                 description="Commands for the suggestion feature of the bot")
-        suggestion.set_author(name="Help For Suggestion Commands 2/5",
+        suggestion.set_author(name="Help For Suggestion Commands 1/4",
                             icon_url=ctx.message.author.avatar_url)
         
         suggestion.add_field(name="Suggest",
@@ -69,23 +70,23 @@ class Help(commands.Cog):
 
         fun = discord.Embed(color=discord.Colour.gold(),
                                 description="Help for the fun commands of the bot")
-        fun.set_author(name="Help For Fun Commands 4/5",
+        fun.set_author(name="Help For Fun Commands 3/4",
                             icon_url=ctx.message.author.avatar_url)
         
-        fun.add_field(name="Hack",
-                        value="```s!hack [Member]```",
+        fun.add_field(name="Meme",
+                        value="```s!meme [SubReddit]```",
                         inline=False)
-        fun.add_field(name="Calmly",
-                        value="```s!calmly```",
+        fun.add_field(name="Cat",
+                        value="```s!cat```",
                         inline=False)
-        fun.add_field(name="Lemon",
-                        value="```s!lemon```",
+        fun.add_field(name="Dog",
+                        value="```s!dog```",
                         inline=False)
         fun.set_footer(text="For the arguements, arguements that are surrounded in <> are required and [] are optional. You do not need these when executing a command.")
 
         utility = discord.Embed(color=discord.Colour.gold(),
                                 description="Commands for the utility feature of the bot")
-        utility.set_author(name="Help For Utility Commands 3/5",
+        utility.set_author(name="Help For Utility Commands 2/4",
                             icon_url=ctx.message.author.avatar_url)
 
         utility.add_field(name="Ping",
@@ -109,24 +110,25 @@ class Help(commands.Cog):
                   4: fun,
                   5: admin}
         
-        message = await ctx.send(embed=menu)
+        message = await ctx.send(embed=suggestion)
         await message.add_reaction("⏪")
         await message.add_reaction("◀️")
         await message.add_reaction("⏹️")
         await message.add_reaction("▶️")
         await message.add_reaction("⏩")
         await message.add_reaction("🔢")
+        await message.add_reaction("ℹ️")
         page = 1 
 
         while True:
             try:
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0)
-                if user == ctx.author and str(reaction) in ["⏪", "◀️", "▶️", "⏩", "⏹️", "🔢"]:
-                    if str(reaction.emoji) == "⏪" and page != 1:
-                        page = 1
+                if user == ctx.author and str(reaction) in ["⏪", "◀️", "▶️", "⏩", "⏹️", "🔢", "ℹ️"]:
+                    if str(reaction.emoji) == "⏪" and page != 2:
+                        page = 2
                         await message.edit(embed=embeds[page])
                     
-                    elif str(reaction.emoji) == "◀️" and page != 1:
+                    elif str(reaction.emoji) == "◀️" and page != 2:
                         page -= 1
                         await message.edit(embed=embeds[page])
                     
@@ -148,9 +150,9 @@ class Help(commands.Cog):
                         try:
                             while number is None:
                                 response = await self.bot.wait_for("message", timeout=60.0)
-                                if response.author == ctx.author and response.content in ["1", "2", "3", "4", "5"]:
+                                if response.author == ctx.author and response.content in ["1", "2", "3", "4"]:
                                     try:
-                                        number = int(response.content)
+                                        number = int(response.content)+1
                                     except ValueError:
                                         number = None
                                         continue
@@ -162,13 +164,17 @@ class Help(commands.Cog):
                         await response.delete()
                         page = number
                         await message.edit(embed=embeds[page])
+                    
+                    elif str(reaction.emoji) == "ℹ️":
+                        page = 1
+                        await message.edit(embed=embeds[page])
 
                     await message.remove_reaction(str(reaction.emoji), ctx.author)
                 else:
                     continue
 
             except asyncio.TimeoutError:
-                return
+                return await message.delete()
 
 def setup(bot):
     bot.add_cog(Help(bot))

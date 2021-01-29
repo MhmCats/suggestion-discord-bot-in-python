@@ -5,18 +5,19 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-def get_prefix(bot, message):
-    prefixes = ["s!", "s! ", "S!", "S! "]
+def _get_prefix(bot, message):
+    prefix = "s!"
 
-    return commands.when_mentioned_or(*prefixes)(bot, message)
+    return commands.when_mentioned_or(prefix)(bot, message)
 
 intitial_extensions = ["cogs.admin",
                        "cogs.suggestions",
                        "cogs.help",
                        "cogs.utilities",
-                       "cogs.fun"]
+                       "cogs.fun",
+                       "cogs.events"]
 
-bot = commands.Bot(command_prefix=get_prefix, 
+bot = commands.Bot(command_prefix=_get_prefix, 
                    owner_id=737928480389333004, 
                    help_command=None,
                    intents=discord.Intents.all())
@@ -26,25 +27,6 @@ if __name__ == "__main__":
         bot.load_extension(extension)
         print(f"Loaded extension {extension} successfully")
 
-class Events(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
-    @commands.Cog.listener("on_ready")
-    async def print_when_login(self):
-        print(f'\nLogged in as: {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n')
-
-
-    @commands.Cog.listener("on_guild_join")
-    async def message_when_join_guild(self, guild):
-        role = await guild.create_role(name="Suggestion Blacklist")
-        for channel in guild.text_channels:
-            if channel.permissions_for(guild.me).send_messages:
-                await channel.send(f"Hello I am a bot made to do suggestions. My prefix is `s!` and pinging me! I have created a role called <@&{role.id}> for you to add to people who you don't want suggesting. Please do not change the name of this role but you are welcome to give it a new colour.\n\nType s!help for help on commands!")
-                break
-
-bot.add_cog(Events(bot))
-
 class Pinger(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -53,7 +35,6 @@ class Pinger(commands.Cog):
     @tasks.loop(seconds=300.0)
     async def _pinger(self):
         print(f"Ping: {int(self.bot.latency*1000)}ms")
-        await bot.change_presence(activity=discord.Game(name=f"Watching out for s!help | Ping: {int(self.bot.latency*1000)}ms"), status=discord.Status.online)
     
     @_pinger.before_loop
     async def _before_pinger(self):

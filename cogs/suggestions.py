@@ -302,7 +302,7 @@ class Suggestions(commands.Cog):
     @commands.command(name="setup")
     async def _setup(self, ctx):
         for tchannel in ctx.guild.text_channels:
-            if tchannel.name == "suggestions":
+            if "suggestions" in tchannel.name:
                 embed = discord.Embed(color=discord.Colour.red(),
                                   description="There is already a suggestion channel!")
                 embed.set_author(name="Error",
@@ -324,7 +324,7 @@ class Suggestions(commands.Cog):
                               description="**__This is the new suggestion channel__**\n\nIf you type `s!suggest <Suggestion>` anywhere in this server it will pop up here! \n\nMembers who have **Manage Server** permissions can accept and deny suggestions. They can also blacklist people from suggestions. \n\nI hope you enjoy this bot!")
         embed.set_author(name="New Suggestion Channel",
                          icon_url="https://cdn.discordapp.com/avatars/743435729085923379/a1a5d77e6413466d58f95691eb290b6e.webp?size=128")
-        return await ctx.message.reply(embed=embed)
+        return await channel.send(embed=embed)
 
     @_setup.error 
     async def _setup_handler(self, ctx, error):
