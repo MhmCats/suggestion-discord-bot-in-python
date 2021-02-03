@@ -193,6 +193,52 @@ class Suggestions(commands.Cog):
             return await ctx.message.reply("That isn't your suggestion!")
 
     @commands.has_permissions(manage_guild=True)
+    @commands.command(name="consider")
+    async def _consider(self, ctx, messageid: int = None):
+        
+        if await self.check_suggestion_channel(ctx.message.guild) is None:
+            embed = discord.Embed(color=discord.Colour.red(),
+                                  description="This guild has no suggestion channel to fix this either:\n > **1.** Make a channel called `#suggestions`\n > **2.**  Run the command `s!setup`")
+            embed.set_author(name="Error",
+                             icon_url="https://cdn.discordapp.com/emojis/802083299559473222.png")
+            return await ctx.message.reply(embed=embed)
+        else:
+            channel = await self.check_suggestion_channel(ctx.message.guild)
+
+        if messageid is None:
+            embed = discord.Embed(color=discord.Colour.red(),
+                                  description="You did not use this command correctly. The correct implementaton is ```s!consider <Message ID>```")
+            embed.set_author(name="Error",
+                             icon_url="https://cdn.discordapp.com/emojis/802083299559473222.png")
+            return await ctx.message.reply(embed=embed)
+
+        message = await channel.fetch_message(messageid)
+                
+        webhook = await self.get_webhook(channel)
+        if webhook is None:
+            webhook = await channel.create_webhook(name="Suggestion Webhook")
+        if "Open" in message.embeds[0].footer.text:
+            await message.clear_reactions()
+            
+            embed = discord.Embed(color=discord.Colour.orange(),
+                                  title="Suggestion under consideration",
+                                description=f"{message.embeds[0].description}")
+            embed.set_footer(text=f"Open")
+            embed.set_author(name=message.embeds[0].author.name,
+                            icon_url=message.embeds[0].author.icon_url)
+            
+            async with aiohttp.ClientSession() as session:
+                real_webhook = Webhook.from_url(webhook.url, adapter=AsyncWebhookAdapter(session))
+                await real_webhook.edit_message(messageid, embed=embed)
+            
+            
+            emoji = "<:yes:802083268098785291>"
+            await ctx.message.add_reaction(emoji)
+        else:
+            return await ctx.message.reply("This suggestion has already been accepted/denied")
+    
+    
+    @commands.has_permissions(manage_guild=True)
     @commands.command(name="accept")
     async def _accept(self, ctx, messageid: int = None, *, reason = "No Reason"):
         
