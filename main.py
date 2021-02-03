@@ -17,10 +17,15 @@ intitial_extensions = ["cogs.admin",
                        "cogs.fun",
                        "cogs.events"]
 
-bot = commands.Bot(command_prefix=_get_prefix, 
-                   owner_id=737928480389333004, 
-                   help_command=None,
-                   intents=discord.Intents.all())
+intents = discord.Intents.default()
+intents.typing = False
+intents.members = True
+intents.presences = True
+
+bot = commands.AutoShardedBot(command_prefix=_get_prefix, 
+                              owner_id=737928480389333004, 
+                              help_command=None,
+                              intents=intents)
 
 if __name__ == "__main__":
     for extension in intitial_extensions:
