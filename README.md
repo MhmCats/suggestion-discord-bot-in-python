@@ -17,7 +17,7 @@ I also used dotenv which can be installed with:
 The use of dotenv would be like so:
 
 *The bot's file*
-```
+```py
 import discord
 import os
 
@@ -58,7 +58,9 @@ If it does not have any of these then some of its features might not work.
 ## Hosting the bot yourself
 
 If you are looking to host the bot yourself on your own device then you can simply clone the repository and add a file called .env. Inside the .env file it should look like this:
-```TOKEN = [Your Discord Bot's Token]```
+```
+TOKEN = [Your Discord Bot's Token]
+```
 Run the bot in command prompt or the terminal and it should become online!
 If anything goes wrong then just make an issue.
 
